@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/market_model.dart';
@@ -91,6 +92,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
   }
 
   void _onSubscribeToMarket(SubscribeToMarket event, Emitter<MarketState> emit) {
+    debugPrint('switched to -> ${event.symbol}');
     emit(state.copyWith(currentMarket: event.symbol));
     _repository.subscribeToMarket(event.symbol);
   }

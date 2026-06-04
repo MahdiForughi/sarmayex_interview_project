@@ -33,6 +33,9 @@ class DioSseClient extends BaseSseClient {
           responseType: ResponseType.stream,
         ),
       );
+      
+      if (currentUrl != url) return;
+
       isConnecting = false;
 
       if (response.statusCode == 200) {
@@ -53,6 +56,7 @@ class DioSseClient extends BaseSseClient {
         scheduleReconnect();
       }
     } catch (e) {
+      if (currentUrl != url) return;
       if (e is DioException && CancelToken.isCancel(e)) {
         debugPrint('Connection cancelled');
         return;

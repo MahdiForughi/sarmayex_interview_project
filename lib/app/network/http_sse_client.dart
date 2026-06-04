@@ -16,13 +16,19 @@ class HttpSseClient extends BaseSseClient {
     currentUrl = url;
 
     try {
-      _client?.close(); // Ensure previous client is closed if any.
+      _client?.close();
       _client = http.Client();
 
       final request = http.Request('GET', Uri.parse(url));
       request.headers.addAll(sseHeaders);
 
       final response = await _client!.send(request);
+
+      /// Prevent overlapping connections during rapid switching!
+      /// If the user switched markets while we were awaiting the response,
+      /// `currentUrl` will no longer match the `url` this function started with.
+      if (currentUrl != url) return;
+
       isConnecting = false;
 
       if (response.statusCode == 200) {
@@ -41,7 +47,10 @@ class HttpSseClient extends BaseSseClient {
         scheduleReconnect();
       }
     } catch (e) {
-      if (currentUrl == null) return;
+      /// Ignore exceptions thrown by requests that were cancelled
+      /// because the user switched markets quickly.
+      if (currentUrl != url || currentUrl == null) return;
+
       isConnecting = false;
       scheduleReconnect();
     }
