@@ -1,10 +1,10 @@
 {
     "name": "sarmayex_interview_project",
-    "short_name": "sarmayex_interview_project",
+    "short_name": "Sarmayex",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "background_color": "#1a1d23",
+    "theme_color": "#1a1d23",
     "description": "Sarmayex Interview Project",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
