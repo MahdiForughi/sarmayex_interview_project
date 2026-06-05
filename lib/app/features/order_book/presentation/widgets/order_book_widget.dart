@@ -112,7 +112,9 @@ class OrderBookWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '${order.price?.toPriceFormatter ?? 0}',
+            ((order.price ?? 0) < 1
+                ? '${order.price?.toStringAsFixed(3) ?? 0}'
+                : '${order.price?.toPriceFormatter ?? 0}'),
             style: TextStyle(color: color, fontSize: 13),
           ),
           Text(

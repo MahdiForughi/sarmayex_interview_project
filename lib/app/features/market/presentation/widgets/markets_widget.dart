@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sarmayex_interview_project/app/features/market/domain/entities/market_model.dart';
 import 'package:sarmayex_interview_project/app/core/utils/numeric_extension.dart';
+import 'package:sarmayex_interview_project/app/features/market/domain/entities/market_model.dart';
 
 import '../bloc/market_bloc.dart';
 import '../bloc/sse_connection_bloc.dart';
@@ -49,7 +49,9 @@ class MarketsWidget extends StatelessWidget {
                   children: [
                     Text(market.symbol, style: const TextStyle(fontWeight: FontWeight.bold)),
                     Text(
-                      market.price?.toPriceFormatter ?? '0',
+                      ((market.price ?? 0) < 1
+                          ? '${market.price?.toStringAsFixed(3) ?? 0}'
+                          : '${market.price?.toPriceFormatter ?? 0}'),
                       style: const TextStyle(fontSize: 12),
                     ),
                     Text(
