@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sarmayex_interview_project/app/features/market/presentation/bloc/sse_connection_bloc.dart';
-import 'package:sarmayex_interview_project/app/core/model/base/sse_event_model.dart';
 
 import '../../domain/entities/market_model.dart';
+import '../bloc/sse_connection_bloc.dart';
 
 abstract class MarketEvent extends Equatable {
   const MarketEvent();
@@ -49,7 +48,6 @@ class MarketState extends Equatable {
 class MarketBloc extends Bloc<MarketEvent, MarketState> {
   final ConnectionBloc _connectionBloc;
   StreamSubscription? _subscription;
-  SseEventModel? _lastProcessedEvent;
 
   MarketBloc(this._connectionBloc) : super(MarketState.initial()) {
     on<_MarketDataReceived>((event, emit) {
@@ -60,15 +58,9 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
   }
 
   void _initialize() {
-    _subscription = _connectionBloc.stream.listen((connectionState) {
-      final event = connectionState.lastEvent;
-      if (event != null && event.event == 'markets') {
-        if (!identical(event, _lastProcessedEvent)) {
-          _lastProcessedEvent = event;
-          add(_MarketDataReceived(_parseMarkets(event.data)));
-        }
-      }
-    });
+    _subscription = _connectionBloc.sseStream
+        .where((event) => event.event == 'markets')
+        .listen((event) => add(_MarketDataReceived(_parseMarkets(event.data))));
   }
 
   List<MarketModel> _parseMarkets(Map<String, dynamic> data) {

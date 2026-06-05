@@ -18,33 +18,30 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppSettingCubit, AppSettingModel>(
-      builder: (context, setting) => MaterialApp.router(
-        themeMode: setting.themeMode,
-        locale: setting.locale,
-        debugShowCheckedModeBanner: false,
-        title: Consts.appName,
-        routerConfig: AppRouter.router,
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        builder: (context, child) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) => ConnectionBloc(locator<MarketRepository>())..add(const ChangeMarket('USDT_IRT')),
-              ),
-              BlocProvider(
-                create: (context) => MarketBloc(context.read<ConnectionBloc>()),
-              ),
-              BlocProvider(
-                create: (context) => OrderBookBloc(context.read<ConnectionBloc>()),
-              ),
-            ],
-            child: child!,
-          );
-        },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ConnectionBloc(locator<MarketRepository>())..add(const ChangeMarket('USDT_IRT')),
+        ),
+        BlocProvider(
+          create: (context) => MarketBloc(context.read<ConnectionBloc>()),
+        ),
+        BlocProvider(
+          create: (context) => OrderBookBloc(context.read<ConnectionBloc>()),
+        ),
+      ],
+      child: BlocBuilder<AppSettingCubit, AppSettingModel>(
+        builder: (context, setting) => MaterialApp.router(
+          themeMode: setting.themeMode,
+          locale: setting.locale,
+          debugShowCheckedModeBanner: false,
+          title: Consts.appName,
+          routerConfig: AppRouter.router,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+        ),
       ),
     );
   }
