@@ -1,8 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app/abstracts/base_key_value_store.dart';
-import 'app/abstracts/base_sse_client.dart';
+import 'app/core/abstracts/base_key_value_store.dart';
+import 'app/core/abstracts/base_sse_client.dart';
+import 'app/core/network/http_sse_client.dart';
+import 'app/core/storage/shared_preferences_helper.dart';
 import 'app/features/market/data/data_sources/market_sse_source.dart';
 import 'app/features/market/data/repositories/market_repository_impl.dart';
 import 'app/features/market/domain/data_sources/market_data_source.dart';
@@ -11,8 +13,6 @@ import 'app/features/setting/data/data_sources/app_setting_local_source.dart';
 import 'app/features/setting/data/repositories/app_setting_repository_impl.dart';
 import 'app/features/setting/domain/data_sources/app_setting_data_source.dart';
 import 'app/features/setting/domain/repositories/app_setting_repository.dart';
-import 'app/network/http_sse_client.dart';
-import 'app/storage/shared_preferences_helper.dart';
 
 final locator = GetIt.instance;
 

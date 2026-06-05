@@ -1,5 +1,5 @@
-import 'package:sarmayex_interview_project/app/abstracts/base_key_value_store.dart';
-import 'package:sarmayex_interview_project/app/constants/storage_keys.dart';
+import 'package:sarmayex_interview_project/app/core/abstracts/base_key_value_store.dart';
+import 'package:sarmayex_interview_project/app/core/constants/storage_keys.dart';
 
 import '../../domain/data_sources/app_setting_data_source.dart';
 import '../../domain/entities/app_setting_model.dart';

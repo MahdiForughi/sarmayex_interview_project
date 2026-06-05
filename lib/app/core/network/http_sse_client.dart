@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:sarmayex_interview_project/app/abstracts/base_sse_client.dart';
+import 'package:sarmayex_interview_project/app/core/abstracts/base_sse_client.dart';
 
 class HttpSseClient extends BaseSseClient {
   http.Client? _client;

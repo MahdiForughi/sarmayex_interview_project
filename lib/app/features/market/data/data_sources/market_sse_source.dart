@@ -1,6 +1,6 @@
-import 'package:sarmayex_interview_project/app/abstracts/base_sse_client.dart';
-import 'package:sarmayex_interview_project/app/constants/base_urls.dart';
-import 'package:sarmayex_interview_project/app/model/base/sse_event_model.dart';
+import 'package:sarmayex_interview_project/app/core/abstracts/base_sse_client.dart';
+import 'package:sarmayex_interview_project/app/core/constants/base_urls.dart';
+import 'package:sarmayex_interview_project/app/core/model/base/sse_event_model.dart';
 
 import '../../domain/data_sources/market_data_source.dart';
 

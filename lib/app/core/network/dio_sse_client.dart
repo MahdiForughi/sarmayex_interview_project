@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:sarmayex_interview_project/app/abstracts/base_sse_client.dart';
+import 'package:sarmayex_interview_project/app/core/abstracts/base_sse_client.dart';
 
 class DioSseClient extends BaseSseClient {
   Dio? _client;

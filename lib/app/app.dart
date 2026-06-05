@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sarmayex_interview_project/app/features/market/presentation/bloc/market_bloc.dart';
-import 'package:sarmayex_interview_project/app/features/order_book/presentation/bloc/order_book_bloc.dart';
 
-import '../app/constants/consts.dart';
 import '../l10n/app_localizations.dart';
 import '../locator.dart';
+import 'core/constants/consts.dart';
+import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
 import 'features/market/domain/repositories/market_repository.dart';
+import 'features/market/presentation/bloc/market_bloc.dart';
+import 'features/market/presentation/bloc/sse_connection_bloc.dart';
+import 'features/order_book/presentation/bloc/order_book_bloc.dart';
 import 'features/setting/domain/entities/app_setting_model.dart';
 import 'features/setting/presentation/cubit/app_setting_cubit.dart';
-import 'router/app_router.dart';
-import 'theme/app_theme.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -32,10 +33,13 @@ class App extends StatelessWidget {
           return MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (_) => MarketBloc(locator<MarketRepository>()),
+                create: (_) => ConnectionBloc(locator<MarketRepository>())..add(const ChangeMarket('USDT_IRT')),
               ),
               BlocProvider(
-                create: (_) => OrderBookBloc(locator<MarketRepository>()),
+                create: (context) => MarketBloc(context.read<ConnectionBloc>()),
+              ),
+              BlocProvider(
+                create: (context) => OrderBookBloc(context.read<ConnectionBloc>()),
               ),
             ],
             child: child!,

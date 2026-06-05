@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:sarmayex_interview_project/app/model/base/sse_event_model.dart';
+import 'package:sarmayex_interview_project/app/core/model/base/sse_event_model.dart';
 
 import '../../domain/data_sources/market_data_source.dart';
 

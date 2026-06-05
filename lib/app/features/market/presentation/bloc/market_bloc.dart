@@ -1,26 +1,17 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sarmayex_interview_project/app/features/market/presentation/bloc/sse_connection_bloc.dart';
+import 'package:sarmayex_interview_project/app/core/model/base/sse_event_model.dart';
 
 import '../../domain/entities/market_model.dart';
-import '../../domain/repositories/market_repository.dart';
 
 abstract class MarketEvent extends Equatable {
   const MarketEvent();
 
   @override
   List<Object?> get props => [];
-}
-
-class SubscribeToMarket extends MarketEvent {
-  final String symbol;
-
-  const SubscribeToMarket(this.symbol);
-
-  @override
-  List<Object?> get props => [symbol];
 }
 
 class _MarketDataReceived extends MarketEvent {
@@ -33,39 +24,34 @@ class _MarketDataReceived extends MarketEvent {
 }
 
 class MarketState extends Equatable {
-  final String currentMarket;
   final List<MarketModel> markets;
 
   const MarketState({
-    required this.currentMarket,
     required this.markets,
   });
 
   factory MarketState.initial() => const MarketState(
-    currentMarket: 'USDT_IRT',
     markets: [],
   );
 
   MarketState copyWith({
-    String? currentMarket,
     List<MarketModel>? markets,
   }) {
     return MarketState(
-      currentMarket: currentMarket ?? this.currentMarket,
       markets: markets ?? this.markets,
     );
   }
 
   @override
-  List<Object?> get props => [currentMarket, markets];
+  List<Object?> get props => [markets];
 }
 
 class MarketBloc extends Bloc<MarketEvent, MarketState> {
-  final MarketRepository _repository;
+  final ConnectionBloc _connectionBloc;
   StreamSubscription? _subscription;
+  SseEventModel? _lastProcessedEvent;
 
-  MarketBloc(this._repository) : super(MarketState.initial()) {
-    on<SubscribeToMarket>(_onSubscribeToMarket);
+  MarketBloc(this._connectionBloc) : super(MarketState.initial()) {
     on<_MarketDataReceived>((event, emit) {
       emit(state.copyWith(markets: event.markets));
     });
@@ -74,10 +60,15 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
   }
 
   void _initialize() {
-    _subscription = _repository
-        .subscribeToMarket('USDT_IRT')
-        .where((event) => event.event == 'markets')
-        .listen((event) => add(_MarketDataReceived(_parseMarkets(event.data))));
+    _subscription = _connectionBloc.stream.listen((connectionState) {
+      final event = connectionState.lastEvent;
+      if (event != null && event.event == 'markets') {
+        if (!identical(event, _lastProcessedEvent)) {
+          _lastProcessedEvent = event;
+          add(_MarketDataReceived(_parseMarkets(event.data)));
+        }
+      }
+    });
   }
 
   List<MarketModel> _parseMarkets(Map<String, dynamic> data) {
@@ -91,16 +82,9 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     }).toList();
   }
 
-  void _onSubscribeToMarket(SubscribeToMarket event, Emitter<MarketState> emit) {
-    debugPrint('switched to -> ${event.symbol}');
-    emit(state.copyWith(currentMarket: event.symbol));
-    _repository.subscribeToMarket(event.symbol);
-  }
-
   @override
   Future<void> close() {
     _subscription?.cancel();
-    _repository.disconnect();
     return super.close();
   }
 }

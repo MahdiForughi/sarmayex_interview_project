@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sarmayex_interview_project/app/theme/app_colors.dart';
+import 'package:sarmayex_interview_project/app/core/theme/app_colors.dart';
 
-import '../../gen/fonts.gen.dart';
+import '../../../gen/fonts.gen.dart';
 
 class AppTheme {
   static final light = ThemeData(

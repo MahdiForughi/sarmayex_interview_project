@@ -1,4 +1,4 @@
-import 'package:sarmayex_interview_project/app/model/base/sse_event_model.dart';
+import 'package:sarmayex_interview_project/app/core/model/base/sse_event_model.dart';
 
 abstract class MarketDataSource {
   Stream<SseEventModel> get stream;

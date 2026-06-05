@@ -1,28 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sarmayex_interview_project/app/features/market/domain/entities/market_model.dart';
-import 'package:sarmayex_interview_project/app/utils/numeric_extension.dart';
+import 'package:sarmayex_interview_project/app/core/utils/numeric_extension.dart';
 
 import '../bloc/market_bloc.dart';
+import '../bloc/sse_connection_bloc.dart';
 
 class MarketsWidget extends StatelessWidget {
   const MarketsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<MarketBloc, MarketState, ({List<MarketModel> markets, String currentMarket})>(
-      selector: (state) => (markets: state.markets, currentMarket: state.currentMarket),
-      builder: (context, values) {
-        if (values.markets.isEmpty) {
+    return BlocBuilder<MarketBloc, MarketState>(
+      builder: (context, marketState) {
+        if (marketState.markets.isEmpty) {
           return const Center(child: CircularProgressIndicator());
+        }
+
+        final currentMarket = context.select((ConnectionBloc b) => b.state.currentMarket);
+        final markets = marketState.markets;
+
+        final sortedMarkets = List<MarketModel>.from(markets);
+        final currentIndex = sortedMarkets.indexWhere((m) => m.symbol == currentMarket);
+        if (currentIndex > 0) {
+          final activeItem = sortedMarkets.removeAt(currentIndex);
+          sortedMarkets.insert(0, activeItem);
         }
 
         return ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: values.markets.length,
+          itemCount: sortedMarkets.length,
           itemBuilder: (context, index) {
-            final market = values.markets[index];
-            final isSelected = market.symbol == values.currentMarket;
+            final market = sortedMarkets[index];
+            final isSelected = market.symbol == currentMarket;
             final isPositive = (market.changePct ?? 0) >= 0;
 
             return Padding(
@@ -30,7 +40,7 @@ class MarketsWidget extends StatelessWidget {
               child: ChoiceChip(
                 onSelected: (selected) {
                   if (selected && !isSelected) {
-                    context.read<MarketBloc>().add(SubscribeToMarket(market.symbol));
+                    context.read<ConnectionBloc>().add(ChangeMarket(market.symbol));
                   }
                 },
                 selected: isSelected,
